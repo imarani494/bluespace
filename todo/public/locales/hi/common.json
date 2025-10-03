@@ -1,0 +1,33 @@
+{
+  "common": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि"
+  },
+  "auth": {
+    "signIn": "साइन इन करें",
+    "signUp": "साइन अप करें",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "logout": "लॉगआउट"
+  },
+  "tasks": {
+    "title": "कार्य",
+    "addTask": "कार्य जोड़ें",
+    "titlePlaceholder": "क्या करना है?",
+    "notesPlaceholder": "नोट्स जोड़ें...",
+    "empty": "अभी तक कोई कार्य नहीं",
+    "emptyDescription": "शुरू करने के लिए अपना पहला कार्य बनाएं!",
+    "confirmDelete": "क्या आप वाकई इस कार्य को हटाना चाहते हैं?",
+    "toggleStatus": "पूर्णता स्थिति टॉगल करें",
+    "all": "सभी",
+    "pending": "लंबित",
+    "completed": "पूर्ण"
+  },
+  "error": {
+    "loadingTasks": "कार्य लोड करने में त्रुटि"
+  }
+}

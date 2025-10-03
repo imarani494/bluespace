@@ -1,0 +1,33 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "error": "Error"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "logout": "Logout"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "addTask": "Add Task",
+    "titlePlaceholder": "What needs to be done?",
+    "notesPlaceholder": "Add notes...",
+    "empty": "No tasks yet",
+    "emptyDescription": "Create your first task to get started!",
+    "confirmDelete": "Are you sure you want to delete this task?",
+    "toggleStatus": "Toggle completion status",
+    "all": "All",
+    "pending": "Pending",
+    "completed": "Completed"
+  },
+  "error": {
+    "loadingTasks": "Error loading tasks"
+  }
+}

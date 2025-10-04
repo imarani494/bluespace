@@ -1,18 +1,14 @@
-Todo App - Modern React Task Management Application
-https://img.shields.io/badge/React-18.2.0-blue
-https://img.shields.io/badge/Supabase-RealTime-green
-https://img.shields.io/badge/Responsive-Yes-brightgreen
-https://img.shields.io/badge/License-MIT-yellow
+
 
 📋 Project Overview
 A sophisticated, production-ready Todo application built with React, featuring modern UI/UX patterns, real-time synchronization, and comprehensive task management capabilities.
 
 🚀 Live Demo & Video Walkthrough
-📹 Video Walkthrough & Demo - Watch Demo
+📹 https://drive.google.com/file/d/1pdaiMQXOieV_9vwDkRFfjD02bPvP1urk/view?usp=drive_link
 
-🌐 Live Demo - View Live App
 
-🎯 Key Features
+
+
 🔐 Authentication & Security
 Secure Auth System: JWT-based authentication with Supabase
 
@@ -21,6 +17,9 @@ Session Management: Persistent login sessions with automatic token refresh
 Protected Routes: Route guards for authenticated access only
 
 Password Security: Secure password handling with encryption
+
+
+
 
 🎨 Modern UI/UX
 Dual Theme System: Light/Dark mode with system preference detection
@@ -44,6 +43,8 @@ Status Tracking: Pending/Completed states with visual indicators
 
 Smart Filtering: Search and filter by status/text
 
+
+
 🌐 Internationalization
 Multi-language Support: English & Hindi with easy extension
 
@@ -59,6 +60,8 @@ Completion Rates: Progress tracking with percentages
 Performance Stats: Task completion analytics
 
 Trend Analysis: Productivity patterns over time
+
+
 
 🏗️ Project Structure
 text
@@ -103,6 +106,10 @@ src/
 │   ├── globals.css
 │   └── components.css
 └── App.jsx
+
+
+
+
 🛠️ Technology Stack
 Core Technologies
 React 18.2.0 - Modern React with concurrent features
@@ -151,12 +158,14 @@ Supabase account
 
 Environment Setup
 bash
+
 # Clone repository
 git clone https://github.com/your-username/todo-app.git
 cd todo-app
 
 # Install dependencies
 npm install
+
 
 # Environment configuration
 cp .env.example .env
@@ -185,6 +194,9 @@ Track Progress: Monitor completion rates in dashboard
 
 Customize: Switch themes and languages in settings
 
+
+
+
 Task Interface
 Based on the application design:
 
@@ -205,6 +217,9 @@ Escape - Cancel editing
 
 / - Focus search
 
+
+
+
 🗃️ Database Schema
 sql
 CREATE TABLE tasks (
@@ -221,6 +236,10 @@ CREATE TABLE tasks (
 ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own tasks" ON tasks
   FOR ALL USING (auth.uid() = user_id);
+
+
+
+  
 🚀 Deployment
 Hosting Options
 Vercel: Zero-config deployment
@@ -252,18 +271,7 @@ import aliImage from '../assets/ali.png';
 function Component() {
   return <img src={aliImage} alt="Description" />;
 }
-Recommended Image Structure
-text
-public/
-└── images/
-    └── ali.png
-
-src/
-└── assets/
-    └── images/
-        ├── ali.png
-        ├── icons/
-        └── screenshots/
+ts/
 🤝 Contributing
 Development Workflow
 Fork the repository
@@ -274,4 +282,3 @@ Commit changes (git commit -m 'Add amazing feature')
 
 Push to branch (git push origin feature/amazing-feature)
 
-Open Pull Request

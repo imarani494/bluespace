@@ -1,34 +1,39 @@
-import React from 'react'
+import React from "react";
 
-const Input = ({
-  label,
-  error,
-  className = '',
-  ...props
-}) => {
+const Input = ({ label, error, icon, className = "", ...props }) => {
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           {label}
         </label>
       )}
-      <input
-        className={`
-          w-full px-3 py-2 border border-gray-300 rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-          transition-all duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed
-          ${error ? 'border-red-200 focus:ring-red-500' : ''}
-          ${className}
-        `}
-        {...props}
-      />
+      <div className="relative">
+        <input
+          className={`
+            w-full px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-xl
+            focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+            transition-all duration-200
+            disabled:opacity-50 disabled:cursor-not-allowed
+            bg-white/50 dark:bg-gray-700/50
+            text-gray-900 dark:text-white
+            placeholder-gray-500 dark:placeholder-gray-400
+            backdrop-blur-sm
+            ${
+              error
+                ? "border-red-300 dark:border-red-500 focus:ring-red-500"
+                : ""
+            }
+            ${className}
+          `}
+          {...props}
+        />
+      </div>
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;

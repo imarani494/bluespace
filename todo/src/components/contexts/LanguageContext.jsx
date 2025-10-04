@@ -1,17 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const LanguageContext = createContext();
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (!context) {
+  if (!context)
     throw new Error("useLanguage must be used within LanguageProvider");
-  }
   return context;
 };
 
 export const LanguageProvider = ({ children }) => {
+  // Store as string, not JSON
   const [language, setLanguage] = useLocalStorage("todo-language", "en");
 
   const translations = {
@@ -24,8 +24,9 @@ export const LanguageProvider = ({ children }) => {
         logout: "Logout",
         welcomeBack: "Welcome Back",
         createAccount: "Create Account",
-        noAccount: "Don't have an account?",
-        hasAccount: "Already have an account?"
+        forgotPassword: "Forgot Password?",
+        hasAccount: "Already have an account?",
+        noAccount: "Don't have an account?"
       },
       tasks: {
         title: "Tasks",
@@ -38,20 +39,18 @@ export const LanguageProvider = ({ children }) => {
         cancel: "Cancel",
         markComplete: "Mark Complete",
         markIncomplete: "Mark Incomplete",
-        confirmDelete: "Are you sure you want to delete this task?"
+        confirmDelete: "Are you sure you want to delete this task?",
+        addNote: "Add Note",
+        notes: "Notes",
+        errorTitleRequired: "Please enter a task title",
+        errorAddFailed: "Failed to add task",
+        errorUpdateFailed: "Failed to update task",
+        errorDeleteFailed: "Failed to delete task"
       },
       status: {
         all: "All",
         pending: "Pending",
-        completed: "Completed",
-        active: "Active"
-      },
-      dashboard: {
-        title: "Dashboard",
-        totalTasks: "Total Tasks",
-        completedTasks: "Completed",
-        pendingTasks: "Pending",
-        completionRate: "Completion Rate"
+        completed: "Completed"
       },
       ui: {
         loading: "Loading...",
@@ -60,10 +59,32 @@ export const LanguageProvider = ({ children }) => {
         searchPlaceholder: "Search tasks...",
         noResults: "No tasks found",
         tryDifferent: "Try different search terms",
-        lightMode: "Light Mode",
-        darkMode: "Dark Mode",
-        english: "English",
-        hindi: "Hindi"
+        dashboard: "Dashboard",
+        overview: "Overview of your productivity",
+        showing: "Showing",
+        of: "of",
+        for: "for"
+      },
+      dashboard: {
+        title: "Dashboard",
+        subtitle: "Overview of your productivity",
+        totalTasks: "Total Tasks",
+        allTasks: "All tasks",
+        completed: "Completed",
+        done: "Tasks done",
+        pending: "Pending",
+        toDo: "To do",
+        completionRate: "Completion Rate",
+        efficiency: "Efficiency",
+        progress: "Progress Overview",
+        completion: "Task Completion",
+        insights: "Productivity Insights",
+        productivity: "Productivity Level",
+        excellent: "Excellent",
+        good: "Good",
+        needsImprovement: "Needs Improvement",
+        activeTasks: "Active Tasks",
+        avgCompletion: "Average Completion"
       }
     },
     hi: {
@@ -75,8 +96,9 @@ export const LanguageProvider = ({ children }) => {
         logout: "लॉगआउट",
         welcomeBack: "वापसी पर स्वागत है",
         createAccount: "खाता बनाएं",
-        noAccount: "खाता नहीं है?",
-        hasAccount: "पहले से खाता है?"
+        forgotPassword: "पासवर्ड भूल गए?",
+        hasAccount: "पहले से खाता है?",
+        noAccount: "खाता नहीं है?"
       },
       tasks: {
         title: "कार्य",
@@ -89,20 +111,18 @@ export const LanguageProvider = ({ children }) => {
         cancel: "रद्द करें",
         markComplete: "पूर्ण चिह्नित करें",
         markIncomplete: "अपूर्ण चिह्नित करें",
-        confirmDelete: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?"
+        confirmDelete: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?",
+        addNote: "नोट जोड़ें",
+        notes: "नोट्स",
+        errorTitleRequired: "कृपया कार्य शीर्षक दर्ज करें",
+        errorAddFailed: "कार्य जोड़ने में विफल",
+        errorUpdateFailed: "कार्य अपडेट करने में विफल",
+        errorDeleteFailed: "कार्य हटाने में विफल"
       },
       status: {
         all: "सभी",
         pending: "लंबित",
-        completed: "पूर्ण",
-        active: "सक्रिय"
-      },
-      dashboard: {
-        title: "डैशबोर्ड",
-        totalTasks: "कुल कार्य",
-        completedTasks: "पूर्ण",
-        pendingTasks: "लंबित",
-        completionRate: "पूर्णता दर"
+        completed: "पूर्ण"
       },
       ui: {
         loading: "लोड हो रहा है...",
@@ -111,10 +131,32 @@ export const LanguageProvider = ({ children }) => {
         searchPlaceholder: "कार्य खोजें...",
         noResults: "कोई कार्य नहीं मिला",
         tryDifferent: "अलग खोज शब्द आज़माएं",
-        lightMode: "लाइट मोड",
-        darkMode: "डार्क मोड",
-        english: "अंग्रेज़ी",
-        hindi: "हिंदी"
+        dashboard: "डैशबोर्ड",
+        overview: "आपकी उत्पादकता का अवलोकन",
+        showing: "दिखा रहा है",
+        of: "का",
+        for: "के लिए"
+      },
+      dashboard: {
+        title: "डैशबोर्ड",
+        subtitle: "आपकी उत्पादकता का अवलोकन",
+        totalTasks: "कुल कार्य",
+        allTasks: "सभी कार्य",
+        completed: "पूर्ण",
+        done: "कार्य पूर्ण",
+        pending: "लंबित",
+        toDo: "करने के लिए",
+        completionRate: "पूर्णता दर",
+        efficiency: "दक्षता",
+        progress: "प्रगति अवलोकन",
+        completion: "कार्य पूर्णता",
+        insights: "उत्पादकता अंतर्दृष्टि",
+        productivity: "उत्पादकता स्तर",
+        excellent: "उत्कृष्ट",
+        good: "अच्छा",
+        needsImprovement: "सुधार की आवश्यकता",
+        activeTasks: "सक्रिय कार्य",
+        avgCompletion: "औसत पूर्णता"
       }
     }
   };

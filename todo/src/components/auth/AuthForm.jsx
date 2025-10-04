@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { useAuth } from "../../contexts/AuthContext";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useTheme } from "../../contexts/ThemeContext";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 const AuthForm = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +12,7 @@ const AuthForm = () => {
 
   const { signIn, signUp } = useAuth();
   const { t, toggleLanguage, language } = useLanguage();
-  const { toggleTheme, isDark } = useTheme();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,79 +33,111 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4 flex gap-2">
-        <Button variant="outline" size="small" onClick={toggleLanguage}>
+    <div className="auth-container">
+    
+      <div
+        className="theme-toggle"
+        style={{ position: "absolute", top: "20px", right: "20px" }}
+      >
+        <button className="theme-btn" onClick={toggleLanguage}>
           {language === "en" ? "हिंदी" : "English"}
-        </Button>
-        <Button variant="outline" size="small" onClick={toggleTheme}>
-          {isDark ? "☀️" : "🌙"}
-        </Button>
+        </button>
+        <button
+          className={`theme-btn ${theme === "light" ? "active" : ""}`}
+          onClick={() => setTheme("light")}
+        >
+          ☀️
+        </button>
+        <button
+          className={`theme-btn ${theme === "dark" ? "active" : ""}`}
+          onClick={() => setTheme("dark")}
+        >
+          🌙
+        </button>
       </div>
 
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
-        <div className="text-center">
-          <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-xl">✓</span>
-          </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900 dark:text-white">
+      <div className="auth-card card-glass fade-in">
+      
+        <div className="auth-header">
+          <div className="auth-logo">✓</div>
+          <h1 className="auth-title">
             {isSignUp ? t("auth.createAccount") : t("auth.welcomeBack")}
-          </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          </h1>
+          <p className="auth-subtitle">
             {isSignUp
               ? "Create your account to get started"
               : "Sign in to your account to continue"}
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+       
+        <form onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <div
+              style={{
+                backgroundColor: "var(--error)",
+                color: "white",
+                padding: "12px",
+                borderRadius: "8px",
+                marginBottom: "16px",
+                fontSize: "14px"
+              }}
+            >
+              {error}
             </div>
           )}
 
-          <Input
-            label={t("auth.email")}
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-            placeholder="you@example.com"
-          />
+          <div className="input-group">
+            <label className="input-label">{t("auth.email")}</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={loading}
+              placeholder="you@example.com"
+              className="input-field"
+            />
+          </div>
 
-          <Input
-            label={t("auth.password")}
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            disabled={loading}
-            placeholder="••••••••"
-          />
+          <div className="input-group">
+            <label className="input-label">{t("auth.password")}</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              disabled={loading}
+              placeholder="••••••••"
+              className="input-field"
+            />
+          </div>
 
-          <Button
+          <button
             type="submit"
-            variant="primary"
-            size="large"
-            loading={loading}
             disabled={loading}
-            className="w-full"
+            className="btn btn-primary"
+            style={{ width: "100%", marginBottom: "16px" }}
           >
-            {isSignUp ? t("auth.signUp") : t("auth.signIn")}
-          </Button>
+            {loading
+              ? "Loading..."
+              : isSignUp
+              ? t("auth.signUp")
+              : t("auth.signIn")}
+          </button>
 
-          <div className="text-center">
+          <div style={{ textAlign: "center" }}>
             <button
               type="button"
               onClick={() => setIsSignUp(!isSignUp)}
-              className="text-primary hover:text-primary-dark text-sm font-medium"
+              className="btn btn-ghost"
               disabled={loading}
             >
               {isSignUp ? t("auth.hasAccount") : t("auth.noAccount")}{" "}
-              {isSignUp ? t("auth.signIn") : t("auth.signUp")}
+              <span style={{ color: "var(--accent-primary)" }}>
+                {isSignUp ? t("auth.signIn") : t("auth.signUp")}
+              </span>
             </button>
           </div>
         </form>

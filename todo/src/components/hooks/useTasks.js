@@ -1,109 +1,103 @@
-import { useState, useEffect } from "react";
-import { supabase } from "../services/supabase";
-import { useAuth } from "./useAuth";
+import { useState, useEffect } from 'react';
+import { supabase } from '../services/supabase';
+import { useAuth } from './useAuth';
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { user } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      fetchTasks();
-    } else {
-      setTasks([]);
-    }
-  }, [user]);
-
   const fetchTasks = async () => {
-    if (!user) return;
+    if (!user) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
+    setError(null);
+    
     try {
-      const { data, error } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+      const { data, error: supabaseError } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (supabaseError) throw supabaseError;
       setTasks(data || []);
     } catch (err) {
+      console.error('Error fetching tasks:', err);
       setError(err.message);
+      setTasks([]);
     } finally {
       setLoading(false);
     }
   };
 
   const addTask = async (taskData) => {
-    if (!user) return { data: null, error: new Error("No user logged in") };
+    if (!user) throw new Error('User not authenticated');
 
-    try {
-      const { data, error } = await supabase
-        .from("tasks")
-        .insert([
-          {
-            ...taskData,
-            user_id: user.id,
-            status: "pending",
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-        ])
-        .select();
+    const { data, error: supabaseError } = await supabase
+      .from('tasks')
+      .insert([{
+        ...taskData,
+        user_id: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
 
-      if (error) throw error;
-      setTasks((prev) => [data[0], ...prev]);
-      return { data, error: null };
-    } catch (err) {
-      setError(err.message);
-      return { data: null, error: err };
-    }
+    if (supabaseError) throw supabaseError;
+    
+    setTasks(prev => [data, ...prev]);
+    return data;
   };
 
   const updateTask = async (taskId, updates) => {
-    try {
-      const { data, error } = await supabase
-        .from("tasks")
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString()
-        })
-        .eq("id", taskId)
-        .select();
+    const { data, error: supabaseError } = await supabase
+      .from('tasks')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', taskId)
+      .select()
+      .single();
 
-      if (error) throw error;
-      setTasks((prev) =>
-        prev.map((task) => (task.id === taskId ? data[0] : task))
-      );
-      return { data, error: null };
-    } catch (err) {
-      setError(err.message);
-      return { data: null, error: err };
-    }
+    if (supabaseError) throw supabaseError;
+    
+    setTasks(prev => prev.map(task => 
+      task.id === taskId ? { ...task, ...updates } : task
+    ));
+    
+    return data;
   };
 
   const deleteTask = async (taskId) => {
-    try {
-      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+    const { error: supabaseError } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId);
 
-      if (error) throw error;
-      setTasks((prev) => prev.filter((task) => task.id !== taskId));
-      return { error: null };
-    } catch (err) {
-      setError(err.message);
-      return { error: err };
-    }
+    if (supabaseError) throw supabaseError;
+    
+    setTasks(prev => prev.filter(task => task.id !== taskId));
   };
+
+  useEffect(() => {
+    fetchTasks();
+  }, [user]);
 
   return {
     tasks,
     loading,
     error,
+    fetchTasks,
     addTask,
     updateTask,
-    deleteTask,
-    refetch: fetchTasks
+    deleteTask
   };
 };

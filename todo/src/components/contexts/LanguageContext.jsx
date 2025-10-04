@@ -1,19 +1,20 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const LanguageContext = createContext();
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
-  if (!context)
+  if (!context) {
     throw new Error("useLanguage must be used within LanguageProvider");
+  }
   return context;
 };
 
 export const LanguageProvider = ({ children }) => {
-  // Store as string, not JSON
   const [language, setLanguage] = useLocalStorage("todo-language", "en");
 
+  // Complete translations - no API needed
   const translations = {
     en: {
       auth: {
@@ -24,9 +25,7 @@ export const LanguageProvider = ({ children }) => {
         logout: "Logout",
         welcomeBack: "Welcome Back",
         createAccount: "Create Account",
-        forgotPassword: "Forgot Password?",
-        hasAccount: "Already have an account?",
-        noAccount: "Don't have an account?"
+        forgotPassword: "Forgot Password?"
       },
       tasks: {
         title: "Tasks",
@@ -42,10 +41,7 @@ export const LanguageProvider = ({ children }) => {
         confirmDelete: "Are you sure you want to delete this task?",
         addNote: "Add Note",
         notes: "Notes",
-        errorTitleRequired: "Please enter a task title",
-        errorAddFailed: "Failed to add task",
-        errorUpdateFailed: "Failed to update task",
-        errorDeleteFailed: "Failed to delete task"
+        titleRequired: "Please enter a task title"
       },
       status: {
         all: "All",
@@ -64,27 +60,6 @@ export const LanguageProvider = ({ children }) => {
         showing: "Showing",
         of: "of",
         for: "for"
-      },
-      dashboard: {
-        title: "Dashboard",
-        subtitle: "Overview of your productivity",
-        totalTasks: "Total Tasks",
-        allTasks: "All tasks",
-        completed: "Completed",
-        done: "Tasks done",
-        pending: "Pending",
-        toDo: "To do",
-        completionRate: "Completion Rate",
-        efficiency: "Efficiency",
-        progress: "Progress Overview",
-        completion: "Task Completion",
-        insights: "Productivity Insights",
-        productivity: "Productivity Level",
-        excellent: "Excellent",
-        good: "Good",
-        needsImprovement: "Needs Improvement",
-        activeTasks: "Active Tasks",
-        avgCompletion: "Average Completion"
       }
     },
     hi: {
@@ -96,9 +71,7 @@ export const LanguageProvider = ({ children }) => {
         logout: "लॉगआउट",
         welcomeBack: "वापसी पर स्वागत है",
         createAccount: "खाता बनाएं",
-        forgotPassword: "पासवर्ड भूल गए?",
-        hasAccount: "पहले से खाता है?",
-        noAccount: "खाता नहीं है?"
+        forgotPassword: "पासवर्ड भूल गए?"
       },
       tasks: {
         title: "कार्य",
@@ -114,10 +87,7 @@ export const LanguageProvider = ({ children }) => {
         confirmDelete: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?",
         addNote: "नोट जोड़ें",
         notes: "नोट्स",
-        errorTitleRequired: "कृपया कार्य शीर्षक दर्ज करें",
-        errorAddFailed: "कार्य जोड़ने में विफल",
-        errorUpdateFailed: "कार्य अपडेट करने में विफल",
-        errorDeleteFailed: "कार्य हटाने में विफल"
+        titleRequired: "कृपया कार्य शीर्षक दर्ज करें"
       },
       status: {
         all: "सभी",
@@ -136,27 +106,6 @@ export const LanguageProvider = ({ children }) => {
         showing: "दिखा रहा है",
         of: "का",
         for: "के लिए"
-      },
-      dashboard: {
-        title: "डैशबोर्ड",
-        subtitle: "आपकी उत्पादकता का अवलोकन",
-        totalTasks: "कुल कार्य",
-        allTasks: "सभी कार्य",
-        completed: "पूर्ण",
-        done: "कार्य पूर्ण",
-        pending: "लंबित",
-        toDo: "करने के लिए",
-        completionRate: "पूर्णता दर",
-        efficiency: "दक्षता",
-        progress: "प्रगति अवलोकन",
-        completion: "कार्य पूर्णता",
-        insights: "उत्पादकता अंतर्दृष्टि",
-        productivity: "उत्पादकता स्तर",
-        excellent: "उत्कृष्ट",
-        good: "अच्छा",
-        needsImprovement: "सुधार की आवश्यकता",
-        activeTasks: "सक्रिय कार्य",
-        avgCompletion: "औसत पूर्णता"
       }
     }
   };
@@ -164,21 +113,35 @@ export const LanguageProvider = ({ children }) => {
   const t = (key) => {
     const keys = key.split(".");
     let value = translations[language];
+
     for (const k of keys) {
       value = value?.[k];
+      if (value === undefined) {
+        console.warn(`Translation missing for: ${key}`);
+        // Fallback to English
+        let fallbackValue = translations.en;
+        for (const k of keys) {
+          fallbackValue = fallbackValue?.[k];
+        }
+        return fallbackValue || key;
+      }
     }
+
     return value || key;
   };
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "hi" : "en"));
+    const newLang = language === "en" ? "hi" : "en";
+    console.log("🔄 Switching to:", newLang);
+    setLanguage(newLang);
   };
 
   const value = {
     language,
     setLanguage,
     t,
-    toggleLanguage
+    toggleLanguage,
+    loading: false // No loading since we're not using API
   };
 
   return (

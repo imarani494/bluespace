@@ -11,44 +11,42 @@ export const useTheme = () => {
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useLocalStorage("todo-theme", "light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
+    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Update CSS variables based on theme
     const root = document.documentElement;
-
-    // Remove both theme classes
-    root.classList.remove("theme-light", "theme-dark");
-
-    // Add current theme class
-    root.classList.add(`theme-${theme}`);
-
-    // Set data-theme attribute for CSS
-    root.setAttribute("data-theme", theme);
-
-    console.log("Theme applied:", theme);
-  }, [theme, mounted]);
+    if (theme === 'dark') {
+      root.style.setProperty('--text-primary', '#f8fafc');
+      root.style.setProperty('--text-secondary', '#cbd5e1');
+      root.style.setProperty('--text-tertiary', '#94a3b8');
+      root.style.setProperty('--bg-primary', '#0f172a');
+      root.style.setProperty('--bg-secondary', '#1e293b');
+      root.style.setProperty('--bg-card', '#1e293b');
+    } else {
+      root.style.setProperty('--text-primary', '#1e293b');
+      root.style.setProperty('--text-secondary', '#475569');
+      root.style.setProperty('--text-tertiary', '#64748b');
+      root.style.setProperty('--bg-primary', '#ffffff');
+      root.style.setProperty('--bg-secondary', '#f8fafc');
+      root.style.setProperty('--bg-card', '#ffffff');
+    }
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    console.log("Toggling theme to:", newTheme);
-    setTheme(newTheme);
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   const value = {
     theme,
-    setTheme,
     toggleTheme,
-    isDark: theme === "dark",
-    mounted
+    isDark: theme === 'dark'
   };
 
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
   );
 };

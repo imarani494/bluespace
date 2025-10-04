@@ -89,7 +89,7 @@ src/
 │   └── components.css
 └── App.jsx
 
-https://src/assets/images/ali.png
+https://./src/assets/ali.png
 
 
 Core Technologies

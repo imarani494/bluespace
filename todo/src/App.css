@@ -1,26 +1,145 @@
-/* Custom Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+/* Import Google Fonts for better typography */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+
+/* Global font settings */
+* {
+  font-family: "Inter", "Plus Jakarta Sans", system-ui, -apple-system,
+    sans-serif;
+}
+
+/* Improved font rendering */
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Font family utility classes */
+.font-sans {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+.font-display {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* Improved font sizes for better readability */
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
+/* Medium font weights for better readability */
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+
+/* Hindi font support */
+@font-face {
+  font-family: "Hindi";
+  src: local("Arial"), local("Helvetica");
+  unicode-range: U+0900-097F;
+}
+
+/* Apply Hindi font for Hindi text */
+[lang="hi"] {
+  font-family: "Hindi", "Inter", system-ui, sans-serif;
+}
+
+/* Better line heights for different screen sizes */
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+    line-height: 1.5;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .text-base {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  .text-lg {
+    font-size: 1.0625rem;
+    line-height: 1.5;
+  }
+  .text-xl {
+    font-size: 1.125rem;
+    line-height: 1.5;
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* Improved input field typography */
+input,
+textarea,
+select {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 16px; /* Prevent zoom on iOS */
+  font-weight: 400;
 }
 
+/* Button typography */
+button {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+/* Headings with better typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Improved readability for long text */
+.prose {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+/* Custom animations for better UX */
 @keyframes float {
   0%,
   100% {
@@ -31,140 +150,42 @@
   }
 }
 
-@keyframes pulseSlow {
+@keyframes float-delayed {
   0%,
   100% {
-    opacity: 0.7;
-    transform: scale(1);
+    transform: translateY(0px);
   }
   50% {
-    opacity: 1;
-    transform: scale(1.05);
+    transform: translateY(-15px);
   }
-}
-
-@keyframes glow {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-
-@keyframes bounceIn {
-  0% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-  70% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes checkmark {
-  0% {
-    transform: scale(0) rotate(-180deg);
-  }
-  100% {
-    transform: scale(1) rotate(0);
-  }
-}
-
-/* Animation Classes */
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-.animate-slide-in-left {
-  animation: slideInLeft 0.5s ease-out;
 }
 
 .animate-float {
-  animation: float 4s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
 .animate-float-delayed {
-  animation: float 4s ease-in-out infinite;
-  animation-delay: 1s;
+  animation: float-delayed 8s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 .animate-pulse-slow {
-  animation: pulseSlow 3s ease-in-out infinite;
+  animation: pulse 3s ease-in-out infinite;
 }
 
-.counter-animation {
-  animation: bounceIn 0.6s ease-out;
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
 }
 
-.animate-fade-in-delayed {
-  animation: fadeIn 0.6s ease-out 0.3s both;
-}
-
-.task-item-animation {
-  animation: fadeIn 0.5s ease-out both;
-}
-
-.edit-form-animation {
-  animation: fadeIn 0.3s ease-out;
-}
-
-.priority-glow-animation {
-  animation: glow 3s ease-in-out infinite;
-}
-
-.checkbox-animation {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.checkmark-animation {
-  animation: checkmark 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.text-slide-in {
-  animation: slideInLeft 0.4s ease-out;
-}
-
-.fade-in-delayed {
-  animation: fadeIn 0.5s ease-out 0.2s both;
-}
-
-.fade-in-stagger > * {
-  animation: fadeIn 0.4s ease-out both;
-}
-
-.fade-in-stagger > *:nth-child(1) {
-  animation-delay: 0.1s;
-}
-.fade-in-stagger > *:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.fade-in-stagger > *:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.badge-animation {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-edit-animation,
-.btn-delete-animation {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-cancel-animation {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.btn-save-animation {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.task-card-animation {
-  animation: fadeIn 0.5s ease-out;
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }

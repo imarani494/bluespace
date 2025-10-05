@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { useTasks } from "../contexts/TaskContext";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -10,13 +9,12 @@ import CalendarSidebar from "./CalendarSidebar";
 
 const TodoApp = () => {
   const { tasks, loading, updateTask, deleteTask, fetchTasks } = useTasks();
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [activeView, setActiveView] = useState("tasks");
   const [searchTerm, setSearchTerm] = useState("");
   const [showTaskForm, setShowTaskForm] = useState(true);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(
@@ -26,7 +24,6 @@ const TodoApp = () => {
           task.notes.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [tasks, searchTerm]);
-
 
   const handleUpdateTask = async (taskId, updates) => {
     try {
@@ -41,7 +38,6 @@ const TodoApp = () => {
     }
   };
 
-
   const handleDeleteTask = async (taskId) => {
     try {
       await deleteTask(taskId);
@@ -53,7 +49,6 @@ const TodoApp = () => {
     }
   };
 
- 
   const handleTaskAdded = () => {
     fetchTasks();
     setShowTaskForm(false);
@@ -63,11 +58,9 @@ const TodoApp = () => {
     setShowTaskForm(false);
   };
 
-
   const handleShowForm = () => {
     setShowTaskForm(true);
   };
-
 
   const handleCalendarToggle = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -81,12 +74,11 @@ const TodoApp = () => {
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         onCalendarToggle={handleCalendarToggle}
-        isCalendarOpen={isCalendarOpen}
+        onAddTask={handleShowForm} 
       />
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex gap-8">
-      
           <div
             className={`${
               isCalendarOpen ? "w-2/3" : "w-full"
@@ -98,22 +90,25 @@ const TodoApp = () => {
               <div className="space-y-8">
                 <div className="text-center space-y-2">
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {language === "en" ? "Task Management" : "कार्य प्रबंधन"}
+                    {t("tasks.title")}
                   </h1>
-                 
+                  <p className="text-gray-600 dark:text-gray-400">
+                    {language === "en"
+                      ? "Manage your tasks efficiently"
+                      : "अपने कार्यों को कुशलतापूर्वक प्रबंधित करें"}
+                  </p>
 
-               
                   {!showTaskForm && (
                     <button
                       onClick={handleShowForm}
                       className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
-                      {language === "en" ? "Add New Task" : "नया कार्य जोड़ें"}
+                      {t("tasks.addTask")}
                     </button>
                   )}
                 </div>
 
-                {/* Conditionally render TaskForm */}
+                
                 {showTaskForm && (
                   <TaskForm
                     onTaskAdded={handleTaskAdded}
@@ -131,7 +126,7 @@ const TodoApp = () => {
             )}
           </div>
 
-          {/* Calendar Sidebar */}
+         
           {isCalendarOpen && (
             <div className="w-1/3 transition-all duration-300">
               <CalendarSidebar

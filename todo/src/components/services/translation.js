@@ -1,6 +1,6 @@
 const MYMEMORY_API = 'https://api.mymemory.translated.net/get';
 
-// Fallback translations in case API fails
+
 const fallbackTranslations = {
   hi: {
     auth: {
@@ -51,11 +51,11 @@ const fallbackTranslations = {
 };
 
 export const translateText = async (text, targetLanguage = 'hi') => {
-  // If text is already in target language or empty, return as is
+  
   if (!text || targetLanguage === 'en') return text;
   
   try {
-    const sourceLang = 'en'; // We're translating from English
+    const sourceLang = 'en'; 
     const targetLang = targetLanguage;
     
     const response = await fetch(
@@ -71,11 +71,11 @@ export const translateText = async (text, targetLanguage = 'hi') => {
   } catch (error) {
     console.warn('Translation failed, using fallback:', error);
     
-    // Use fallback translations
+
     const keys = text.toLowerCase().split(' ');
-    let fallbackText = text; // Default to original text
+    let fallbackText = text; 
     
-    // Simple fallback matching (you can improve this)
+   
     Object.values(fallbackTranslations.hi).forEach(category => {
       if (typeof category === 'object') {
         Object.entries(category).forEach(([key, value]) => {
@@ -91,7 +91,7 @@ export const translateText = async (text, targetLanguage = 'hi') => {
 };
 
 export const getTranslation = (key, language) => {
-  if (language === 'en') return null; // We only have fallback for Hindi
+  if (language === 'en') return null; 
   
   const keys = key.split('.');
   let value = fallbackTranslations[language];

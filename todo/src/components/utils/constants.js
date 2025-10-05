@@ -1,20 +1,21 @@
 export const TASK_STATUS = {
-  PENDING: 'pending',
-  COMPLETED: 'completed'
+  PENDING: "pending",
+  IN_PROGRESS: "inProgress",
+  COMPLETED: "completed"
 };
 
 export const TASK_PRIORITY = {
-  LOW: 'low',
-  MEDIUM: 'medium',
-  HIGH: 'high'
+  LOW: "low",
+  MEDIUM: "medium",
+  HIGH: "high"
 };
 
 export const LANGUAGES = {
-  ENGLISH: 'en',
-  HINDI: 'hi'
+  ENGLISH: "en",
+  HINDI: "hi"
 };
 
 export const THEMES = {
-  LIGHT: 'light',
-  DARK: 'dark'
+  LIGHT: "light",
+  DARK: "dark"
 };

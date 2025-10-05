@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const translations = {
+// Only keep English translations as base
+const baseTranslations = {
   en: {
     auth: {
       login: "Login",
@@ -10,7 +11,12 @@ const translations = {
       password: "Password",
       confirmPassword: "Confirm Password",
       noAccount: "Don't have an account?",
-      haveAccount: "Already have an account?"
+      haveAccount: "Already have an account?",
+      welcomeBack: "Welcome back to your productivity hub",
+      createAccount: "Create your account to get started",
+      processing: "Processing...",
+      loading: "Loading...",
+      accountCreated: "Account created! Please login."
     },
     tasks: {
       title: "Tasks",
@@ -25,10 +31,15 @@ const translations = {
       priority: "Priority",
       completed: "Completed",
       pending: "Pending",
+      inProgress: "In Progress",
       all: "All",
       noTasks: "No tasks yet",
       addFirstTask: "Add your first task to get started!",
-      deleteConfirm: "Are you sure you want to delete this task?"
+      deleteConfirm: "Are you sure you want to delete this task?",
+      titleRequired: "Task title is required",
+      addTaskError: "Failed to add task",
+      taskManagement: "Task Management",
+      manageTasks: "Manage your tasks efficiently"
     },
     dashboard: {
       title: "Dashboard",
@@ -36,7 +47,9 @@ const translations = {
       totalTasks: "Total Tasks",
       completedTasks: "Completed",
       pendingTasks: "Pending",
-      completionRate: "Completion Rate"
+      inProgressTasks: "In Progress",
+      completionRate: "Completion Rate",
+      recentActivity: "Recent Activity"
     },
     ui: {
       dashboard: "Dashboard",
@@ -48,7 +61,11 @@ const translations = {
       create: "Create",
       delete: "Delete",
       edit: "Edit",
-      loading: "Loading..."
+      loading: "Loading...",
+      noResults: "No tasks found",
+      tryDifferent: "Try adjusting your search terms",
+      showing: "Showing",
+      of: "of"
     },
     priority: {
       low: "Low",
@@ -59,67 +76,13 @@ const translations = {
       name: "TodoPro",
       tagline: "Productivity Simplified"
     }
-  },
-
-  hi: {
-    auth: {
-      login: "लॉगिन",
-      signup: "साइन अप",
-      logout: "लॉग आउट",
-      email: "ईमेल",
-      password: "पासवर्ड",
-      confirmPassword: "पासवर्ड पुष्टि करें",
-      noAccount: "खाता नहीं है?",
-      haveAccount: "पहले से खाता है?"
-    },
-    tasks: {
-      title: "कार्य",
-      addTask: "कार्य जोड़ें",
-      editTask: "कार्य संपादित करें",
-      deleteTask: "कार्य हटाएं",
-      titlePlaceholder: "क्या करना है?",
-      notes: "नोट्स",
-      notesPlaceholder: "नोट्स जोड़ें...",
-      status: "स्थिति",
-      dueDate: "नियत तारीख",
-      priority: "प्राथमिकता",
-      completed: "पूर्ण",
-      pending: "लंबित",
-      all: "सभी",
-      noTasks: "अभी तक कोई कार्य नहीं",
-      addFirstTask: "शुरू करने के लिए अपना पहला कार्य जोड़ें!",
-      deleteConfirm: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?"
-    },
-    dashboard: {
-      title: "डैशबोर्ड",
-      overview: "आपकी उत्पादकता का अवलोकन",
-      totalTasks: "कुल कार्य",
-      completedTasks: "पूर्ण",
-      pendingTasks: "लंबित",
-      completionRate: "पूर्णता दर"
-    },
-    ui: {
-      dashboard: "डैशबोर्ड",
-      calendar: "कैलेंडर",
-      searchPlaceholder: "कार्य खोजें...",
-      save: "सेव",
-      cancel: "रद्द करें",
-      update: "अपडेट",
-      create: "बनाएं",
-      delete: "हटाएं",
-      edit: "संपादित",
-      loading: "लोड हो रहा है..."
-    },
-    priority: {
-      low: "कम",
-      medium: "मध्यम",
-      high: "उच्च"
-    },
-    app: {
-      name: "टोडोप्रो",
-      tagline: "उत्पादकता सरल"
-    }
   }
+};
+
+// Language configuration
+const languageConfig = {
+  en: { code: "en", name: "English", nativeName: "English", flag: "🇺🇸" },
+  hi: { code: "hi", name: "Hindi", nativeName: "हिन्दी", flag: "🇮🇳" }
 };
 
 const LanguageContext = createContext();
@@ -134,10 +97,13 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState("en");
+  const [translations, setTranslations] = useState(baseTranslations);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translationCache, setTranslationCache] = useState({});
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("todo-app-language");
-    if (savedLanguage) {
+    if (savedLanguage && languageConfig[savedLanguage]) {
       setLanguage(savedLanguage);
     }
   }, []);
@@ -146,30 +112,167 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem("todo-app-language", language);
   }, [language]);
 
-  const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "hi" : "en"));
+  // Dynamic translation using Google Translate API
+  const translateText = async (text, targetLang = language) => {
+    if (!text || targetLang === "en") return text;
+
+    // Check cache first
+    const cacheKey = `${text}_${targetLang}`;
+    if (translationCache[cacheKey]) {
+      return translationCache[cacheKey];
+    }
+
+    try {
+      setIsTranslating(true);
+
+      // Use Google Translate API
+      const response = await fetch(
+        `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(
+          text
+        )}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Translation API failed");
+      }
+
+      const data = await response.json();
+      let translatedText = data[0].map((item) => item[0]).join("");
+
+      // Clean up the translation
+      translatedText = translatedText.trim();
+
+      // Cache the translation
+      setTranslationCache((prev) => ({
+        ...prev,
+        [cacheKey]: translatedText
+      }));
+
+      return translatedText;
+    } catch (error) {
+      console.warn("Translation failed:", error);
+      return text; // Return original text if translation fails
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
-  const t = (key) => {
+  // Translate entire object recursively
+  const translateObject = async (obj, targetLang) => {
+    if (targetLang === "en") return obj;
+
+    const translated = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === "string") {
+        translated[key] = await translateText(value, targetLang);
+      } else if (typeof value === "object" && value !== null) {
+        translated[key] = await translateObject(value, targetLang);
+      } else {
+        translated[key] = value;
+      }
+    }
+
+    return translated;
+  };
+
+  // Load or translate language when changed
+  useEffect(() => {
+    const loadLanguage = async () => {
+      if (language === "en") {
+        setTranslations(baseTranslations);
+        return;
+      }
+
+      setIsTranslating(true);
+      try {
+        // Check if we already have this language translated
+        if (translations[language]) {
+          return; // Already translated
+        }
+
+        // Translate the entire English base to target language
+        const translatedBase = await translateObject(
+          baseTranslations.en,
+          language
+        );
+
+        setTranslations((prev) => ({
+          ...prev,
+          [language]: translatedBase
+        }));
+      } catch (error) {
+        console.error("Failed to load language:", error);
+        // Fallback to English
+        setTranslations(baseTranslations);
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+
+    loadLanguage();
+  }, [language]);
+
+  // Get available languages
+  const getAvailableLanguages = () => {
+    return Object.keys(languageConfig).map((code) => ({
+      code,
+      ...languageConfig[code]
+    }));
+  };
+
+  const setLanguageWithTranslation = async (newLang) => {
+    if (newLang === language) return;
+    setLanguage(newLang);
+  };
+
+  const toggleLanguage = () => {
+    const newLang = language === "en" ? "hi" : "en";
+    setLanguageWithTranslation(newLang);
+  };
+
+  // Translation function for task content (for individual task titles/notes)
+  const translateTaskContent = async (text, targetLang = language) => {
+    if (!text || targetLang === "en") return text;
+    return await translateText(text, targetLang);
+  };
+
+  const t = (key, fallback) => {
     const keys = key.split(".");
     let value = translations[language];
 
+    // Try to get translation for current language
     for (const k of keys) {
       if (value && value[k] !== undefined) {
         value = value[k];
       } else {
-        console.warn("Translation missing:", key);
-        return key;
+        // Fallback to English
+        value = baseTranslations.en;
+        for (const k of keys) {
+          if (value && value[k] !== undefined) {
+            value = value[k];
+          } else {
+            console.warn("Translation missing:", key);
+            return fallback || key.split(".").pop();
+          }
+        }
+        break;
       }
     }
 
-    return value;
+    return value || fallback || key.split(".").pop();
   };
 
   const value = {
     language,
+    setLanguage: setLanguageWithTranslation,
     toggleLanguage,
-    t
+    t,
+    translateTaskContent,
+    translateText,
+    isTranslating,
+    availableLanguages: getAvailableLanguages(),
+    currentLanguage: languageConfig[language] || languageConfig.en
   };
 
   return (

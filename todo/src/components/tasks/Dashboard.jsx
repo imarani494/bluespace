@@ -1,146 +1,145 @@
 import React from 'react';
+import { useTasks } from '../contexts/TaskContext';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const Dashboard = ({ stats }) => {
+const Dashboard = () => {
+  const { tasks } = useTasks();
   const { t } = useLanguage();
 
-  const StatCard = ({ title, value, subtitle, icon, color, trend }) => (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/20 transition-all duration-300 hover:shadow-xl hover:scale-105">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-            {title}
-          </p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-            {value}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {subtitle}
-          </p>
-        </div>
-        <div className={`p-3 rounded-xl ${color} text-white text-2xl`}>
-          {icon}
-        </div>
-      </div>
-      {trend && (
-        <div className="mt-4 flex items-center">
-          <span className={`text-sm ${trend.color}`}>{trend.value}</span>
-        </div>
-      )}
-    </div>
-  );
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const pendingTasks = tasks.filter(task => task.status === 'pending').length;
+  const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
 
-  const ProgressBar = ({ percentage, color }) => (
-    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-      <div
-        className={`h-2 rounded-full transition-all duration-1000 ${color}`}
-        style={{ width: `${percentage}%` }}
-      ></div>
-    </div>
-  );
+  const recentTasks = tasks
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
 
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+    <div className="space-y-6">
+    
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
           {t('dashboard.title')}
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t('dashboard.subtitle')}
+        <p className="text-slate-600 dark:text-slate-400">
+          {t('dashboard.overview')}
         </p>
       </div>
 
+   
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title={t('dashboard.totalTasks')}
-          value={stats.total}
-          subtitle={t('dashboard.allTasks')}
-          icon="📊"
-          color="bg-blue-500"
-        />
-        <StatCard
-          title={t('dashboard.completed')}
-          value={stats.completed}
-          subtitle={t('dashboard.done')}
-          icon="✅"
-          color="bg-green-500"
-        />
-        <StatCard
-          title={t('dashboard.pending')}
-          value={stats.pending}
-          subtitle={t('dashboard.toDo')}
-          icon="⏳"
-          color="bg-yellow-500"
-        />
-        <StatCard
-          title={t('dashboard.completionRate')}
-          value={`${stats.completionRate}%`}
-          subtitle={t('dashboard.efficiency')}
-          icon="📈"
-          color="bg-purple-500"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/20">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {t('dashboard.progress')}
-          </h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t('dashboard.completion')}
-              </span>
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {stats.completionRate}%
-              </span>
+       
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
             </div>
-            <ProgressBar
-              percentage={stats.completionRate}
-              color="bg-gradient-to-r from-blue-500 to-purple-600"
-            />
-            <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-              <span>0%</span>
-              <span>50%</span>
-              <span>100%</span>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {t('dashboard.totalTasks')}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                {tasks.length}
+              </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-gray-700/20">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {t('dashboard.insights')}
-          </h3>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t('dashboard.productivity')}
-              </span>
-              <span className={`text-sm font-medium ${
-                stats.completionRate >= 70 ? 'text-green-600' : 
-                stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
-              }`}>
-                {stats.completionRate >= 70 ? t('dashboard.excellent') :
-                 stats.completionRate >= 40 ? t('dashboard.good') : t('dashboard.needsImprovement')}
-              </span>
+     
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t('dashboard.activeTasks')}
-              </span>
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {stats.pending}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {t('dashboard.avgCompletion')}
-              </span>
-              <span className="text-sm font-medium text-gray-900 dark:text-white">
-                {stats.total > 0 ? Math.round(stats.completed / stats.total * 100) : 0}%
-              </span>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {t('dashboard.completedTasks')}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                {completedTasks}
+              </p>
             </div>
           </div>
+        </div>
+
+     
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {t('dashboard.pendingTasks')}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                {pendingTasks}
+              </p>
+            </div>
+          </div>
+        </div>
+
+   
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+            </div>
+            <div className="ml-4">
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                {t('dashboard.completionRate')}
+              </p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+                {completionRate}%
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+        <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+          {t('Recent Activity')}
+        </h2>
+        <div className="space-y-3">
+          {recentTasks.length > 0 ? (
+            recentTasks.map(task => (
+              <div key={task.id} className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-700 last:border-0">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-2 h-2 rounded-full ${
+                    task.status === 'completed' ? 'bg-green-500' : 'bg-yellow-500'
+                  }`}></div>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">
+                    {task.title}
+                  </span>
+                </div>
+                <span className="text-xs text-slate-500 dark:text-slate-400">
+                  {new Date(task.created_at).toLocaleDateString()}
+                </span>
+              </div>
+            ))
+          ) : (
+            <p className="text-slate-500 dark:text-slate-400 text-center py-4">
+              {t('tasks.noTasks')}
+            </p>
+          )}
         </div>
       </div>
     </div>

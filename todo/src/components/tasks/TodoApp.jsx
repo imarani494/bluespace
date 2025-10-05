@@ -1,35 +1,77 @@
-import React, { useState, useMemo } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { useTasks } from '../hooks/useTasks';
-import Header from '../common/Header';
-import Dashboard from './Dashboard';
-import TaskForm from './TaskForm';
-import TaskList from './TaskList';
-import { useLanguage } from '../contexts/LanguageContext';
+
+import React, { useState, useMemo } from "react";
+import { useTasks } from "../contexts/TaskContext";
+import { useLanguage } from "../contexts/LanguageContext";
+import Header from "../common/Header";
+import Dashboard from "./Dashboard";
+import TaskForm from "./TaskForm";
+import TaskList from "./TaskList";
+import CalendarSidebar from "./CalendarSidebar";
 
 const TodoApp = () => {
-  const { user } = useAuth();
-  const { tasks, loading, fetchTasks } = useTasks();
-  const [activeView, setActiveView] = useState('tasks');
-  const [searchTerm, setSearchTerm] = useState('');
-  const { t } = useLanguage();
+  const { tasks, loading, updateTask, deleteTask, fetchTasks } = useTasks();
+  const { language } = useLanguage();
+
+  const [activeView, setActiveView] = useState("tasks");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showTaskForm, setShowTaskForm] = useState(true);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
 
   const filteredTasks = useMemo(() => {
     return tasks.filter(
       (task) =>
         task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (task.notes && task.notes.toLowerCase().includes(searchTerm.toLowerCase()))
+        (task.notes &&
+          task.notes.toLowerCase().includes(searchTerm.toLowerCase()))
     );
   }, [tasks, searchTerm]);
 
-  const stats = useMemo(() => {
-    const total = tasks.length;
-    const completed = tasks.filter((t) => t.status === 'completed').length;
-    const pending = tasks.filter((t) => t.status === 'pending').length;
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-    return { total, completed, pending, completionRate };
-  }, [tasks]);
+  const handleUpdateTask = async (taskId, updates) => {
+    try {
+      await updateTask(taskId, updates);
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert(
+        language === "en"
+          ? "Failed to update task"
+          : "कार्य अपडेट करने में विफल"
+      );
+    }
+  };
+
+
+  const handleDeleteTask = async (taskId) => {
+    try {
+      await deleteTask(taskId);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      alert(
+        language === "en" ? "Failed to delete task" : "कार्य हटाने में विफल"
+      );
+    }
+  };
+
+ 
+  const handleTaskAdded = () => {
+    fetchTasks();
+    setShowTaskForm(false);
+  };
+
+  const handleFormClose = () => {
+    setShowTaskForm(false);
+  };
+
+
+  const handleShowForm = () => {
+    setShowTaskForm(true);
+  };
+
+
+  const handleCalendarToggle = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-100/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-all duration-300">
@@ -38,32 +80,68 @@ const TodoApp = () => {
         setActiveView={setActiveView}
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        onCalendarToggle={handleCalendarToggle}
+        isCalendarOpen={isCalendarOpen}
       />
 
-      <main className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {activeView === 'dashboard' ? (
-          <Dashboard stats={stats} />
-        ) : (
-          <div className="space-y-8">
-            <div className="text-center space-y-2">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                {t('tasks.title')}
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400">
-                {t('ui.overview')}
-              </p>
-            </div>
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="flex gap-8">
+      
+          <div
+            className={`${
+              isCalendarOpen ? "w-2/3" : "w-full"
+            } transition-all duration-300`}
+          >
+            {activeView === "dashboard" ? (
+              <Dashboard />
+            ) : (
+              <div className="space-y-8">
+                <div className="text-center space-y-2">
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {language === "en" ? "Task Management" : "कार्य प्रबंधन"}
+                  </h1>
+                 
 
-            <TaskForm onTaskAdded={fetchTasks} />
-            <TaskList
-              tasks={filteredTasks}
-              loading={loading}
-              searchTerm={searchTerm}
-              onTasksUpdate={fetchTasks}
-            />
+               
+                  {!showTaskForm && (
+                    <button
+                      onClick={handleShowForm}
+                      className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl transform hover:scale-105"
+                    >
+                      {language === "en" ? "Add New Task" : "नया कार्य जोड़ें"}
+                    </button>
+                  )}
+                </div>
+
+                {/* Conditionally render TaskForm */}
+                {showTaskForm && (
+                  <TaskForm
+                    onTaskAdded={handleTaskAdded}
+                    onClose={handleFormClose}
+                  />
+                )}
+
+                <TaskList
+                  tasks={filteredTasks}
+                  searchTerm={searchTerm}
+                  onUpdateTask={handleUpdateTask}
+                  onDeleteTask={handleDeleteTask}
+                />
+              </div>
+            )}
           </div>
-        )}
-      </main>
+
+          {/* Calendar Sidebar */}
+          {isCalendarOpen && (
+            <div className="w-1/3 transition-all duration-300">
+              <CalendarSidebar
+                onTaskAdded={handleTaskAdded}
+                onClose={() => setIsCalendarOpen(false)}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

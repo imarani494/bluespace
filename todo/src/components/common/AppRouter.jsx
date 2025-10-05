@@ -1,18 +1,14 @@
-import React from "react";
-import { useAuth } from "../hooks/useAuth";
-import LoadingSpinner from "./LoadingSpinner";
-import AuthForm from "../auth/AuthForm";
-import TodoApp from "../tasks/TodoApp";
+import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import AuthForm from '../auth/AuthForm';
+import TodoApp from '../tasks/TodoApp';
+import LoadingSpinner from './LoadingSpinner';
 
 const AppRouter = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <LoadingSpinner size="large" text="Loading your tasks..." />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return user ? <TodoApp /> : <AuthForm />;

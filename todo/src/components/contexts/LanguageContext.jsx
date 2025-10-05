@@ -1,113 +1,153 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+
+const translations = {
+  en: {
+    auth: {
+      login: "Login",
+      signup: "Sign Up",
+      logout: "Logout",
+      email: "Email",
+      password: "Password",
+      confirmPassword: "Confirm Password",
+      noAccount: "Don't have an account?",
+      haveAccount: "Already have an account?"
+    },
+    tasks: {
+      title: "Tasks",
+      addTask: "Add Task",
+      editTask: "Edit Task",
+      deleteTask: "Delete Task",
+      titlePlaceholder: "What needs to be done?",
+      notes: "Notes",
+      notesPlaceholder: "Add notes...",
+      status: "Status",
+      dueDate: "Due Date",
+      priority: "Priority",
+      completed: "Completed",
+      pending: "Pending",
+      all: "All",
+      noTasks: "No tasks yet",
+      addFirstTask: "Add your first task to get started!",
+      deleteConfirm: "Are you sure you want to delete this task?"
+    },
+    dashboard: {
+      title: "Dashboard",
+      overview: "Overview of your productivity",
+      totalTasks: "Total Tasks",
+      completedTasks: "Completed",
+      pendingTasks: "Pending",
+      completionRate: "Completion Rate"
+    },
+    ui: {
+      dashboard: "Dashboard",
+      calendar: "Calendar",
+      searchPlaceholder: "Search tasks...",
+      save: "Save",
+      cancel: "Cancel",
+      update: "Update",
+      create: "Create",
+      delete: "Delete",
+      edit: "Edit",
+      loading: "Loading..."
+    },
+    priority: {
+      low: "Low",
+      medium: "Medium",
+      high: "High"
+    },
+    app: {
+      name: "TodoPro",
+      tagline: "Productivity Simplified"
+    }
+  },
+
+  hi: {
+    auth: {
+      login: "लॉगिन",
+      signup: "साइन अप",
+      logout: "लॉग आउट",
+      email: "ईमेल",
+      password: "पासवर्ड",
+      confirmPassword: "पासवर्ड पुष्टि करें",
+      noAccount: "खाता नहीं है?",
+      haveAccount: "पहले से खाता है?"
+    },
+    tasks: {
+      title: "कार्य",
+      addTask: "कार्य जोड़ें",
+      editTask: "कार्य संपादित करें",
+      deleteTask: "कार्य हटाएं",
+      titlePlaceholder: "क्या करना है?",
+      notes: "नोट्स",
+      notesPlaceholder: "नोट्स जोड़ें...",
+      status: "स्थिति",
+      dueDate: "नियत तारीख",
+      priority: "प्राथमिकता",
+      completed: "पूर्ण",
+      pending: "लंबित",
+      all: "सभी",
+      noTasks: "अभी तक कोई कार्य नहीं",
+      addFirstTask: "शुरू करने के लिए अपना पहला कार्य जोड़ें!",
+      deleteConfirm: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?"
+    },
+    dashboard: {
+      title: "डैशबोर्ड",
+      overview: "आपकी उत्पादकता का अवलोकन",
+      totalTasks: "कुल कार्य",
+      completedTasks: "पूर्ण",
+      pendingTasks: "लंबित",
+      completionRate: "पूर्णता दर"
+    },
+    ui: {
+      dashboard: "डैशबोर्ड",
+      calendar: "कैलेंडर",
+      searchPlaceholder: "कार्य खोजें...",
+      save: "सेव",
+      cancel: "रद्द करें",
+      update: "अपडेट",
+      create: "बनाएं",
+      delete: "हटाएं",
+      edit: "संपादित",
+      loading: "लोड हो रहा है..."
+    },
+    priority: {
+      low: "कम",
+      medium: "मध्यम",
+      high: "उच्च"
+    },
+    app: {
+      name: "टोडोप्रो",
+      tagline: "उत्पादकता सरल"
+    }
+  }
+};
 
 const LanguageContext = createContext();
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error("useLanguage must be used within LanguageProvider");
+    throw new Error("useLanguage must be used within a LanguageProvider");
   }
   return context;
 };
 
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useLocalStorage("todo-language", "en");
+  const [language, setLanguage] = useState("en");
 
-  // Complete translations - no API needed
-  const translations = {
-    en: {
-      auth: {
-        signIn: "Sign In",
-        signUp: "Sign Up",
-        email: "Email Address",
-        password: "Password",
-        logout: "Logout",
-        welcomeBack: "Welcome Back",
-        createAccount: "Create Account",
-        forgotPassword: "Forgot Password?"
-      },
-      tasks: {
-        title: "Tasks",
-        addTask: "Add Task",
-        titlePlaceholder: "What needs to be done?",
-        notesPlaceholder: "Add notes...",
-        edit: "Edit",
-        delete: "Delete",
-        save: "Save",
-        cancel: "Cancel",
-        markComplete: "Mark Complete",
-        markIncomplete: "Mark Incomplete",
-        confirmDelete: "Are you sure you want to delete this task?",
-        addNote: "Add Note",
-        notes: "Notes",
-        titleRequired: "Please enter a task title"
-      },
-      status: {
-        all: "All",
-        pending: "Pending",
-        completed: "Completed"
-      },
-      ui: {
-        loading: "Loading...",
-        noTasks: "No tasks yet",
-        addFirstTask: "Add your first task to get started!",
-        searchPlaceholder: "Search tasks...",
-        noResults: "No tasks found",
-        tryDifferent: "Try different search terms",
-        dashboard: "Dashboard",
-        overview: "Overview of your productivity",
-        showing: "Showing",
-        of: "of",
-        for: "for"
-      }
-    },
-    hi: {
-      auth: {
-        signIn: "साइन इन करें",
-        signUp: "साइन अप करें",
-        email: "ईमेल पता",
-        password: "पासवर्ड",
-        logout: "लॉगआउट",
-        welcomeBack: "वापसी पर स्वागत है",
-        createAccount: "खाता बनाएं",
-        forgotPassword: "पासवर्ड भूल गए?"
-      },
-      tasks: {
-        title: "कार्य",
-        addTask: "कार्य जोड़ें",
-        titlePlaceholder: "क्या करना है?",
-        notesPlaceholder: "नोट्स जोड़ें...",
-        edit: "संपादित करें",
-        delete: "हटाएं",
-        save: "सहेजें",
-        cancel: "रद्द करें",
-        markComplete: "पूर्ण चिह्नित करें",
-        markIncomplete: "अपूर्ण चिह्नित करें",
-        confirmDelete: "क्या आप वाकई इस कार्य को हटाना चाहते हैं?",
-        addNote: "नोट जोड़ें",
-        notes: "नोट्स",
-        titleRequired: "कृपया कार्य शीर्षक दर्ज करें"
-      },
-      status: {
-        all: "सभी",
-        pending: "लंबित",
-        completed: "पूर्ण"
-      },
-      ui: {
-        loading: "लोड हो रहा है...",
-        noTasks: "अभी तक कोई कार्य नहीं",
-        addFirstTask: "शुरू करने के लिए अपना पहला कार्य जोड़ें!",
-        searchPlaceholder: "कार्य खोजें...",
-        noResults: "कोई कार्य नहीं मिला",
-        tryDifferent: "अलग खोज शब्द आज़माएं",
-        dashboard: "डैशबोर्ड",
-        overview: "आपकी उत्पादकता का अवलोकन",
-        showing: "दिखा रहा है",
-        of: "का",
-        for: "के लिए"
-      }
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("todo-app-language");
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
     }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("todo-app-language", language);
+  }, [language]);
+
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === "en" ? "hi" : "en"));
   };
 
   const t = (key) => {
@@ -115,33 +155,21 @@ export const LanguageProvider = ({ children }) => {
     let value = translations[language];
 
     for (const k of keys) {
-      value = value?.[k];
-      if (value === undefined) {
-        console.warn(`Translation missing for: ${key}`);
-        // Fallback to English
-        let fallbackValue = translations.en;
-        for (const k of keys) {
-          fallbackValue = fallbackValue?.[k];
-        }
-        return fallbackValue || key;
+      if (value && value[k] !== undefined) {
+        value = value[k];
+      } else {
+        console.warn("Translation missing:", key);
+        return key;
       }
     }
 
-    return value || key;
-  };
-
-  const toggleLanguage = () => {
-    const newLang = language === "en" ? "hi" : "en";
-    console.log("🔄 Switching to:", newLang);
-    setLanguage(newLang);
+    return value;
   };
 
   const value = {
     language,
-    setLanguage,
-    t,
     toggleLanguage,
-    loading: false // No loading since we're not using API
+    t
   };
 
   return (

@@ -1,19 +1,21 @@
-import React from 'react';
-import { AuthProvider, LanguageProvider, ThemeProvider } from './components/contexts';
-import AppRouter from './components/common/AppRouter';
-import './App.css'; 
+import React from "react";
+import { LanguageProvider } from "./components/contexts/LanguageContext";
+import { ThemeProvider } from "./components/contexts/ThemeContext";
+import { AuthProvider } from "./components/contexts/AuthContext";
+import { TaskProvider } from "./components/contexts/TaskContext";
+import AppRouter from "./components/common/AppRouter";
 
 function App() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
+    <LanguageProvider>
+      <ThemeProvider>
         <AuthProvider>
-          <div className="app-container">
+          <TaskProvider>
             <AppRouter />
-          </div>
+          </TaskProvider>
         </AuthProvider>
-      </LanguageProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </LanguageProvider>
   );
 }
 

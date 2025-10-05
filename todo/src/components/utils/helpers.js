@@ -1,42 +1,27 @@
 export const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
+  if (!dateString) return '';
+  return new Date(dateString).toLocaleDateString('en-IN', {
+    day: 'numeric',
     month: 'short',
-    day: 'numeric'
+    year: 'numeric'
   });
 };
 
 export const formatDateTime = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'short',
+  if (!dateString) return '';
+  return new Date(dateString).toLocaleString('en-IN', {
     day: 'numeric',
+    month: 'short',
+    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
   });
 };
 
-export const debounce = (func, wait) => {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+export const debounce = (func, delay) => {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(null, args), delay);
   };
-};
-
-export const filterTasks = (tasks, searchTerm, statusFilter) => {
-  return tasks.filter(task => {
-    const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (task.notes && task.notes.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
 };

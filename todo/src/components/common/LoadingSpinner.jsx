@@ -1,22 +1,20 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
-const LoadingSpinner = ({ size = 'medium', text = '', className = '' }) => {
-  const sizeClasses = {
-    small: 'w-4 h-4',
-    medium: 'w-8 h-8',
-    large: 'w-12 h-12'
-  };
+const LoadingSpinner = () => {
+  const { language } = useLanguage();
 
   return (
-    <div className={`flex flex-col items-center justify-center ${className}`}>
-      <div
-        className={`${sizeClasses[size]} border-3 border-gray-300 border-t-blue-500 rounded-full animate-spin`}
-      ></div>
-      {text && (
-        <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 font-medium">
-          {text}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+          {language === 'en' ? 'Loading...' : 'लोड हो रहा है...'}
+        </h2>
+        <p className="text-slate-600 dark:text-slate-400">
+          {language === 'en' ? 'Please wait while we get things ready' : 'कृपया प्रतीक्षा करें, हम चीजों को तैयार कर रहे हैं'}
         </p>
-      )}
+      </div>
     </div>
   );
 };

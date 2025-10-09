@@ -54,6 +54,29 @@ Encrypted Password Handling
 ♿ Accessibility (Keyboard navigation, WCAG 2.1)
 
 
+
+
+🏗️ Project Structure
+src/
+├── components/
+│   ├── auth/                # Login & Signup forms
+│   ├── common/              # Shared components (Header, Router, Spinner)
+│   ├── tasks/               # Dashboard, TaskList, TaskItem, TaskForm
+│   └── ui/                  # Reusable UI elements (Button, Input, Modal)
+│
+├── contexts/                # Global state providers (Auth, Theme, Language)
+│
+├── hooks/                   # Custom React hooks (useAuth, useTasks, etc.)
+│
+├── services/                # Supabase service configuration
+│
+├── utils/                   # Helper functions & constants
+│
+├── styles/                  # Global & component-level styles
+│
+└── App.jsx                  # Root component
+
+
 ✅ Core Features
 
 ✏️ CRUD for tasks (Create, Read, Update, Delete)
